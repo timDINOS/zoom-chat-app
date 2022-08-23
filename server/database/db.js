@@ -1,8 +1,11 @@
+require('dotenv').config();
+
 const mongoose = require('mongoose');
 
+const db_url = process.env.DATABASE_URL;
 
 const connectToDB = function() {
-    return mongoose.connect({useUnifiedTopology: true, userNewUrlParser: true}, err => {
+    return mongoose.connect(db_url, {useUnifiedTopology: true, userNewUrlParser: true}, err => {
         if (err) {
             console.log("connection failed");
         }
