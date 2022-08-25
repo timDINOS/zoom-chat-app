@@ -9,6 +9,7 @@ const changePassword = require("./operations/user_auth/change_password");
 const addFriends = require("./operations/friends/addFriend");
 const removeFriends = require("./operations/friends/removeFriend");
 const getFriends = require("./operations/friends/getFriends");
+const getAllUsers = require("./operations/general/getAllUsers");
 const bodyParser = require('body-parser');
 const sessions = require('expess-session');
 const cookies = require('cookie-parser');
@@ -63,7 +64,7 @@ app.delete("/users/friends", getFriends);
 
 
 //All Users/Profile
-app.get("/users" );
+app.get("/users", getAllUsers);
 
 app.delete("/users", );
 
