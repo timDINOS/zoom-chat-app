@@ -10,10 +10,21 @@ const addFriends = require("./operations/friends/addFriend");
 const removeFriends = require("./operations/friends/removeFriend");
 const getFriends = require("./operations/friends/getFriends");
 const getAllUsers = require("./operations/general/getAllUsers");
+const createAccount = require("./operations/zoom/createAccount");
+const checkAccount = require("./operations/zoom/checkAccounts");
 const bodyParser = require('body-parser');
 const sessions = require('expess-session');
 const cookies = require('cookie-parser');
+const jwt = require('jsonwebtoken');
+const cors = require('cors');
 
+const payload = {
+    iss: `${process.env.ZOOM_API_KEY}`,
+    exp: new Date().getTime() + 100000
+}
+var token = jwt.signPayload(payload, process.env.API_SECRET);
+
+app.use(cors());
 
 app.use(bodyParser.json());
 
@@ -43,6 +54,11 @@ app.delete('/meeting/delete', deleteMeeting);
 
 //Get all Info about Meeting 
 app.get('/meeting/info', getMeetingInfo);
+
+
+app.post('/zoom/account', createAccount);
+
+app.get('/zoom/account', checkAccount);
 
 
 //User Auth
@@ -78,4 +94,4 @@ app.listen(process.env.ZOOM_PORT, function(err) {
     }
 });
 
-module.exports = session;
+module.exports = {session, token};
