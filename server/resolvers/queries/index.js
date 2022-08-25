@@ -1,3 +1,4 @@
 const getUsers = require('./users');
+const getFriends = requies('./friends');
 
-module.exports = {getUsers};
+module.exports = {getUsers, getFriends};

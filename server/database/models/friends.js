@@ -15,9 +15,6 @@ const friendSchema = Schema({
         },
         date: {
             type: Date
-        },
-        count: {
-            type: Number
         }
     }]
 });
