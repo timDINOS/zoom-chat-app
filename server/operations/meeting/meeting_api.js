@@ -81,7 +81,29 @@ const createMeeting = function(req, res) {
 }
 
 const joinMeeting = function(req, res) {
+    var options = {
+        method: "GET",
+        uri: `https://api.zoom.us/v2/meetings/${req.params.meetindId}`,
+        auth: {
+            'Authorization': `BEARER ${token}`
+        },
+        header: {
+            'User-Agent': 'Zoom-api-Jwt-Request',
+            'content-type': 'application/json'
+        },
+        json: true
+    };
 
+    var url = "";
+
+    rp(options)
+    .then((response) => {
+        url = response.data.join_url;
+        return res.status(200).send({"url": `${url}`});
+    })
+    .catch((err) => {
+        return res.status(500).send({"status": "failed", "message": `${err}`});
+    });
 }
 
 const deleteMeeting = function(req, res) {
