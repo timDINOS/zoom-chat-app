@@ -107,11 +107,120 @@ const joinMeeting = function(req, res) {
 }
 
 const deleteMeeting = function(req, res) {
+    var entry = {}
+    axios({
+        method: 'get',
+        url: '',
+        data: {
+            query: `
+            `
+        }
+    })
+    .then((response) => {
+        entry = response.data
+    })
+    .catch((error) => {
+        return res.status(500).send({"status": "failed", "message": `${error}`});
+    });
 
+    var options = {
+        method: 'DELETE',
+        uri: `https://api.zoom.us/v2/meetings/${req.params.meetindId}`,
+        auth: {
+            'Authorization': `BEARER ${token}`
+        },
+        header: {
+            'User-Agent': 'Zoom-api-Jwt-Request',
+            'content-type': 'application/json'
+        },
+        json: true
+    }
+
+    rp(options)
+    .then((response) => {})
+    .catch((error) => {
+        return res.status(500).send({"status": "failed", "message": `${error}`});
+    });
+
+    axios({
+        method: 'delete',
+        url: '',
+        data: {
+            query: `
+                mutation deleteMeeting(input: entry):
+                    meeting_id
+            `
+        },
+        variables: {
+            entry: entry
+        }
+    })
+    .then((response) => {
+        return res.status(204).send({"status": "successful", "deleted": true});
+    })
+    .catch((error) => {
+        return res.status(500).send({"status": "failed", "message": `${error}`});
+    });
 }
 
 const getMeetingInfo = function(req, res) {
+    //
+    var meetingInfo = {}
+    var meeting_options = {
+        method: 'get',
+        uri: `https://api.zoom.us/v2/reports/meetings/${req.params.meetindId}`,
+        auth: {
+            'Authorization': `BEARER ${token}`
+        },
+        header: {
+            'User-Agent': 'Zoom-api-Jwt-Request',
+            'content-type': 'application/json'
+        },
+        json: true
+    }
 
+    rp(meeting_options)
+    .then((response) => {
+        meetingInfo.topic = response.data.topic;
+        meetingInfo.start_time = response.data.start_time;
+        meetingInfo.end_time = response.data.end_time;
+        meetingInfo.participants_count = response.data.participants_count;
+        meetingInfo.user_name = response.data.user_name;
+    })
+    .catch((error) => {
+        return res.status(500).send({"status": "failed", "message": `${error}`});
+    });
+
+    var participant_records = {
+        method: 'get',
+        uri: `https://api.zoom.us/v2/reports/meetings/${req.params.meetindId}/participants`,
+        auth: {
+            'Authorization': `BEARER ${token}`
+        },
+        header: {
+            'User-Agent': 'Zoom-api-Jwt-Request',
+            'content-type': 'application/json'
+        },
+        json: true
+    }
+
+    rp(participant_records)
+    .then((response) => {
+        var users = []
+        for (let i = 0; i < response.data.participants.length; ++i) {
+            var entry = {}
+            entry.name = response.data.participants[i].name;
+            entry.join_time = response.data.participants[i].join_time;
+            entry.leave_time = response.data.participants[i].leave_time;
+            users.append(entry);
+        }
+        meetingInfo.participants = users;
+    })
+    .catch((error) => {
+        return res.status(500).send({"status": "failed", "message": `${error}`});
+    });
+
+    return res.status(200).send({"info": meetingInfo});
 }
 
 module.exports = { createMeeting, joinMeeting, deleteMeeting, getMeetingInfo};
