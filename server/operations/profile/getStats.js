@@ -162,7 +162,8 @@ const getStats = function(req, res) {
             const date2 = response.data.end_time;
             const date1 = response.data.start_time;
             const timeElapsed = Math.abs(date2 - date1);
-            meetings_length.append([response.topic, (timeElapsed/(1000 * 60))]);
+            meetings_length.append([response.data.topic, (timeElapsed/(1000 * 60))]);
+            participants_count_record.append([response.data.topic, response.data.participants_count]);
         })
         .catch((error) => {
             return res.status(500).send({"status": "failed", "error": `${error}`});
@@ -171,6 +172,51 @@ const getStats = function(req, res) {
 
     meetings_length.sort((a, b) => b[1] - a[1]);
     participants_count_record.sort((a, b) => b[1] - a[1]);
+
+    var friends = []
+
+    axios({
+        method: 'get',
+        uri: ''
+    })
+    .then((response) => {
+        for (let x = 0; x < response.data.length; ++x) {
+            if (response.data[x].name == name) {
+                friends = response.data[x].friends;
+                break;
+            }
+        }
+    })
+    .catch((error) => {
+        return res.status(500).send({"status": "failed", "error": `${error}`});
+    });
+
+    var longest_friend = ''
+    var shortest_friend = ''
+
+    var max_friendship = 0
+    var min_friendship = MAX_VALUE
+
+    for (let m = 0; m < friends.length; ++m) {
+        var diff = abs(new Date() - friends[m].date);
+        if (diff > max_friendship) {
+            max_friendship = diff;
+            longest_friend = friends[m].name;
+        }
+    }
+
+    profileStats['friend_with_longest_conn'] = longest_friend;
+
+    for (let n = 0; n < friends.length; ++n) {
+        var diff = abs(new Date() - friends[n].date);
+        if (diff < min_friendship) {
+            min_friendship = diff;
+            shortest_friend = friends[n].name;
+        }
+    }
+
+    profileStats['friend_with_shortest_conn'] = shortest_friend;
+
     return profileStats;
 }
 
