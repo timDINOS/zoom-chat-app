@@ -132,6 +132,45 @@ const getStats = function(req, res) {
         }
     }
 
+    var meetings = '';
+
+    axios({
+        method: 'get',
+        url: ''
+    })
+    .then((response) => {
+        for (let x = 0; x < response.data.length; ++x) {
+            if (response.data[x].name == name) {
+                meetings = response.data[x].meetings;
+                break;
+            }
+        }
+    })
+    .catch((error) => {
+        return res.status(500).send({"status": "failed", "error": `${error}`});
+    });
+
+    var meetings_length = []
+    var participants_count_record = []
+
+    for (let i = 0; i < meetings.length; ++i) {
+        axios({
+            method: 'get',
+            url: ''
+        })
+        .then((response) => {
+            const date2 = response.data.end_time;
+            const date1 = response.data.start_time;
+            const timeElapsed = Math.abs(date2 - date1);
+            meetings_length.append([response.topic, (timeElapsed/(1000 * 60))]);
+        })
+        .catch((error) => {
+            return res.status(500).send({"status": "failed", "error": `${error}`});
+        })
+    }
+
+    meetings_length.sort((a, b) => b[1] - a[1]);
+    participants_count_record.sort((a, b) => b[1] - a[1]);
     return profileStats;
 }
 
