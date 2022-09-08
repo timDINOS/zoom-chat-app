@@ -152,6 +152,8 @@ const getStats = function(req, res) {
 
     var meetings_length = []
     var participants_count_record = []
+    var participants = []
+    var user_attendance = {}
 
     for (let i = 0; i < meetings.length; ++i) {
         axios({
@@ -164,6 +166,10 @@ const getStats = function(req, res) {
             const timeElapsed = Math.abs(date2 - date1);
             meetings_length.append([response.data.topic, (timeElapsed/(1000 * 60))]);
             participants_count_record.append([response.data.topic, response.data.participants_count]);
+            participants = response.data.users;
+            for (let i = 0; i < participants.length; ++i) {
+                user_attendance[participants[i].name] += ((Math.abs(participants[i].leave_time - participants[i].start_time)) / (1000 * 60));
+            }
         })
         .catch((error) => {
             return res.status(500).send({"status": "failed", "error": `${error}`});
@@ -216,6 +222,20 @@ const getStats = function(req, res) {
     }
 
     profileStats['friend_with_shortest_conn'] = shortest_friend;
+
+    var sortedUsersTime = Object.keys(participants).map(
+        (user) => { return [user, participants[user]]}
+    );
+
+    sortedUsersTime.sort(
+        (x, y) => { return x[1] - y[1]} 
+    );
+
+    var sortedUsers = sortedUsersTime.map(
+        (user) => { return user[0] }
+    );
+
+    profileStats['user_attendance'] = sortedUsers;
 
     return profileStats;
 }
