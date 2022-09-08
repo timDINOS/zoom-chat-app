@@ -62,7 +62,59 @@ const deleteAccount = function(req, res) {
         });
     }
 
+    var meetings = []
 
+    axios({
+        method: 'get',
+        url: ''
+    })
+    .then((response) => {
+        meetings = response.data;
+    })
+    .catch((error) => {
+        return res.status(500).send({"status": "failed", "message": `${error}`});
+    });
+
+    var userMeetings;
+
+    for (let i = 0; i < meetings.length; ++i) {
+        if (meetings[i].name == req.body.name) {
+            userMeetings = meetings[i];
+            break;
+        }
+    }
+
+    for (let j = 0; j < userMeetings.meetings.length; ++j) {
+        axios({
+            method: 'delete',
+            uri: ''
+        })
+        .then((response) => {})
+        .catch((error) => {
+            return res.status(500).send({"status": "failed", "message": `${error}`});
+        });
+    }
+
+    axios({
+        method: 'delete',
+        url: '',
+        data: {
+            name: req.body.name
+        }
+    })
+    .then((response) => {})
+    .catch((error) => {
+        return res.status(500).send({"status": "failed", "message": `${error}`});
+    });
+
+    axios({
+        method: 'post',
+        url: '/logout'
+    })
+    .then((response) => {})
+    .catch((error) => {
+        return res.status(500).send({"status": "failed", "message": `${error}`});
+    });
     //Continue deleting other entries associated with User
-    return;
+    return res.status(200).send({"status": "deleted User"});
 }

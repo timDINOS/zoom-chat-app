@@ -15,6 +15,8 @@ const checkAccount = require("./operations/zoom/checkAccounts");
 const getAllMeetings = require("./operations/general/getAllMeetings");
 const addProfile = require("./operations/profile/addProfile");
 const deleteProfile = require("./operations/profile/deleteProfile");
+const getStats = require("./operations/profile/getStats");
+const deleteAcct = require("./operations/general/deleteAcct");
 const bodyParser = require('body-parser');
 const sessions = require('expess-session');
 const cookies = require('cookie-parser');
@@ -85,11 +87,11 @@ app.delete("/users/friends", getFriends);
 //All Users/Profile
 app.get("/users", getAllUsers);
 
-app.delete("/users", );
+app.delete("/users", deleteAcct);
 
 app.get("/users/meetings", getAllMeetings);
 
-app.get("/users/stats", );
+app.get("/users/stats", getStats);
 
 app.post("/users/stats/create", addProfile);
 
