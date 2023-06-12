@@ -16,6 +16,7 @@ const storeRecording = function(req, res) {
         json: true
     };
 
+
     rp(options)
     .then((result) => {
         var filename = `recording${req.body.meeting_id}.mp4`;
@@ -35,4 +36,5 @@ const storeRecording = function(req, res) {
     }).catch((err) => {
         return res.status(500).send({"status": "failed", "message": `${err}`});
     });
+    
 }
