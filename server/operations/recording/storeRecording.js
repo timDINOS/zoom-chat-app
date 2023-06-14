@@ -2,6 +2,8 @@ const rp = require("request-promise");
 const http = require("http");
 const fs = require("fs");
 
+const { createBucket, uploadVideo, hasBucket} = require("./AWSoperations");
+
 const storeRecording = function(req, res) {
     var options = {
         method: "GET",
@@ -36,5 +38,23 @@ const storeRecording = function(req, res) {
     }).catch((err) => {
         return res.status(500).send({"status": "failed", "message": `${err}`});
     });
-    
-}
+
+    var bucketname = res.body.account_id;
+
+    if (!hasBucket(bucketname)) {
+        const bucketRes = createBucket(bucketname);
+        if (bucketRes == 0) {
+            return res.status(500).send({"status": "failed", "message": "Error creating bucket"});
+        }
+    }
+
+    const fileStream = fs.createReadStream(filename);
+
+    const uploadRes = uploadVideo(filename, filestream, bucketname);
+    if (uploadRes == 0) {
+        return res.status(500).send({"status": "failed", "message": "Error uploading video to S3"});
+    }
+    return res.status(200).send({"status": "successful"});
+};
+
+module.exports = storeRecording;
