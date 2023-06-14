@@ -4,6 +4,31 @@ const fs = require("fs");
 
 const { createBucket, uploadVideo, hasBucket} = require("./AWSoperations");
 
+const hasRecordings = function(req, res) {
+    var options = {
+        method: "GET",
+        uri: `https://api.zoom.us/v2/meetings/${req.body.meeting_id}/recordings`,
+        auth: {
+            'Authorization': `BEARER ${token}`
+        },
+        header: {
+            'User-Agent': 'Zoom-api-Jwt-Request',
+            'content-type': 'application/json'
+        },
+        json: true,
+        resolveWithFullResponse: true
+    };
+
+    rp(options)
+    .then((result) => {
+        if (result.statusCode == 200) {
+            return res.status(200).send({"hasRecordings": true});
+        } else if (result.statusCode == 3301) {
+            return res.status(404).send({"hasRecordings": false});
+        }
+    });
+};
+
 const storeRecording = function(req, res) {
     var options = {
         method: "GET",
@@ -23,7 +48,14 @@ const storeRecording = function(req, res) {
     .then((result) => {
         var filename = `recording${req.body.meeting_id}.mp4`;
         const file = fs.createWriteStream(filename);
-        const request = http.get(result.recording_files.download_url, function(response) {
+        url = result.recording_files[0].download_url;
+        for (let i = 0; i < result.recording_files.length; i++) { 
+            if (result.recording_files[i].recording_end - result.recording_files[i].recording_start == result.duration) {
+                result = result.recording_files[i];
+                break;
+            }
+        }
+        const request = http.get(url, function(response) {
             response.pipe(file);
 
             file.on("finish", function() {
@@ -57,4 +89,4 @@ const storeRecording = function(req, res) {
     return res.status(200).send({"status": "successful"});
 };
 
-module.exports = storeRecording;
+module.exports = {hasRecordings, storeRecording};
