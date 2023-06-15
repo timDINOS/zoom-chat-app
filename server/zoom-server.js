@@ -22,6 +22,8 @@ const sessions = require('expess-session');
 const cookies = require('cookie-parser');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
+const { hasRecordings, storeRecording } = require("./operations/recording/storeRecording");
+const { getMeetingRecordings } = require("./operations/recording/getMeetingRecordings");
 
 const payload = {
     iss: `${process.env.ZOOM_API_KEY}`,
@@ -96,6 +98,16 @@ app.get("/users/stats", getStats);
 app.post("/users/stats/create", addProfile);
 
 app.delete("/users/stats/delete", deleteProfile);
+
+
+//Recordings
+
+app.get("/recordings", getMeetingRecordings);
+
+app.post("/recordings", storeRecording);
+
+app.get("/recordings/hasRecording", hasRecordings);
+
 
 
 app.listen(process.env.ZOOM_PORT, function(err) {
