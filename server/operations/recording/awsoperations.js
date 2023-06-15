@@ -61,4 +61,51 @@ const GetAllRecordings = function(username) {
     return allUrls;
 }
 
-module.exports = { createBucket, uploadVideo, hasBucket, GetAllRecordings};
+const deleteObject = function(username, key) {
+    var params = {
+        Bucket: username,
+        Key: key
+    };
+
+    s3.deleteObject(params, function(err, data) {
+        if (err) {
+            return 0;
+        }
+    });
+
+    return 1;
+}
+
+const deleteBucket = function(username) {
+    var params = {
+        Bucket: username
+    };
+
+    var objs = [];
+
+    s3.listObjectsV2(params, function(err, data) {
+        if (err) {
+            return 0;
+        }
+        data.Contents.forEach(function(obj) {
+            objs.push(obj.Key);
+        });
+    });
+
+    if (objs.size > 0) {
+        for (let i = 0; i < objs.size; ++i) {
+            deleteObject(username, objs[i]);
+        }
+    }
+
+    s3.deleteBucket(params, function(err, data) {
+        if (err) {
+            return 0;
+        }
+    });
+
+
+    return 1;
+}
+
+module.exports = { createBucket, uploadVideo, hasBucket, GetAllRecordings, deleteObject, deleteBucket};

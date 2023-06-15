@@ -24,6 +24,7 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const { hasRecordings, storeRecording } = require("./operations/recording/storeRecording");
 const { getMeetingRecordings } = require("./operations/recording/getMeetingRecordings");
+const { deleteUserBucket, deleteRecording } = require("./operations/recording/awsdelete");
 
 const payload = {
     iss: `${process.env.ZOOM_API_KEY}`,
@@ -107,6 +108,10 @@ app.get("/recordings", getMeetingRecordings);
 app.post("/recordings", storeRecording);
 
 app.get("/recordings/hasRecording", hasRecordings);
+
+app.delete("/recordings/delete", deleteRecording);
+
+app.delete("/recordings/deleteBucket", deleteUserBucket);
 
 
 
