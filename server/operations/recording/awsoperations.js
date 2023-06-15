@@ -35,4 +35,30 @@ const hasBucket = function (username) {
     return s3.doesBucketExist(username);
 }
 
-module.exports = { createBucket, uploadVideo, hasBucket};
+const GetAllRecordings = function(username) {
+    var params = {
+        Bucket: username
+    };
+
+    var allRecordings = [];
+
+    s3.listObjectsV2(params, function(err, data) {
+        if (err) {
+            return [];
+        }
+        data.Contents.forEach(function(obj) {
+            allRecordings.push(obj.Key);
+        });
+    });
+
+    var allUrls = [];
+
+    for (let i = 0; i < allRecordings.length; ++i) {
+        var VideoUrl = "https://" + username + "s3.amazonaws.com/" + allRecordings[i];
+        allUrls = allUrls.concat(VideoUrl);
+    }
+
+    return allUrls;
+}
+
+module.exports = { createBucket, uploadVideo, hasBucket, GetAllRecordings};

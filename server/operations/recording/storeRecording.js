@@ -71,7 +71,7 @@ const storeRecording = function(req, res) {
         return res.status(500).send({"status": "failed", "message": `${err}`});
     });
 
-    var bucketname = res.body.account_id;
+    var bucketname = res.body.username;
 
     if (!hasBucket(bucketname)) {
         const bucketRes = createBucket(bucketname);
