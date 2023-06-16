@@ -55,7 +55,7 @@ const GetAllRecordings = function(username) {
 
     for (let i = 0; i < allRecordings.length; ++i) {
         var VideoUrl = "https://" + username + "s3.amazonaws.com/" + allRecordings[i];
-        allUrls = allUrls.concat(VideoUrl);
+        allUrls = allUrls.concat({key: allRecordings[i], url: VideoUrl});
     }
 
     return allUrls;
