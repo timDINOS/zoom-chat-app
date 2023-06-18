@@ -54,8 +54,12 @@ const GetAllRecordings = function(username) {
     var allUrls = [];
 
     for (let i = 0; i < allRecordings.length; ++i) {
-        var VideoUrl = "https://" + username + "s3.amazonaws.com/" + allRecordings[i];
-        allUrls = allUrls.concat({key: allRecordings[i], url: VideoUrl});
+        s3.getSignedUrl({Bucket: username, Key: allRecordings[i], Expires: 864000}, function(err, url) {    
+            if (err) {
+                return [];
+            }
+            allUrls = allUrls.concat({key: allRecordings[i], url: url});
+        });    
     }
 
     return allUrls;
