@@ -54,7 +54,7 @@ const GetAllRecordings = function(username) {
     var allUrls = [];
 
     for (let i = 0; i < allRecordings.length; ++i) {
-        s3.getSignedUrl({Bucket: username, Key: allRecordings[i], Expires: 864000}, function(err, url) {    
+        s3.getSignedUrl('getObject', {Bucket: username, Key: allRecordings[i], Expires: 864000}, function(err, url) {    
             if (err) {
                 return [];
             }
