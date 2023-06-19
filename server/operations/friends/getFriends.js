@@ -9,9 +9,9 @@ const getFriends = function(req, res) {
             query: `
                 query getFriends {
                     Friends {
-                        name
+                        username
                         friends {
-                            name
+                            username
                             date
                         }
                     }

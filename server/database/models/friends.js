@@ -4,12 +4,12 @@ const { Schema } = mongoose;
 
 
 const friendSchema = Schema({
-    name: {
+    username: {
         type: String,
         trim: true
     },
     friends: [{
-        name: {
+        username: {
             type: String,
             trim: true
         },
