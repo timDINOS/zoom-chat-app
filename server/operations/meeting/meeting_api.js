@@ -182,8 +182,7 @@ const getMeetingInfo = function(req, res) {
     rp(meeting_options)
     .then((response) => {
         meetingInfo.topic = response.data.topic;
-        meetingInfo.start_time = response.data.start_time;
-        meetingInfo.end_time = response.data.end_time;
+        meetingInfo.duration = response.data.duration;
         meetingInfo.participants_count = response.data.participants_count;
         meetingInfo.user_name = response.data.user_name;
     })
