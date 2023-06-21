@@ -1,6 +1,6 @@
-const axios = require('axios');
 const getFriends = require('../friends/getFriends.js');
 const { createBucket, uploadExternalVideo, hasBucket } = require('./AWSoperations.js');
+const rp = require('request-promise');
 
 //body
 // 1. Meeting URL
@@ -11,38 +11,49 @@ const shareRecording = function (req, res) {
     var allUsers;
     if (res.body.participantsOnly) { //get all participants
         var allParticipants;
-        axios(); //get all participants via zoom api
-
-        axios('/users/friends', {
+        var options = {
             method: 'get',
-            params: {
-                username: req.body.username
-            }
-        }).then((results) => {
-            var allResults = allParticipants.map(allParticipants => {allParticipants.name, allParticipants.email});
-            while (results.data.length > 0) {
-                for (let j = 0; j < allResults.length; j++) {
-                    if (results.data[0].user_email == allResults[j].email) {
+            uri: `https://api.zoom.us/v2/reports/past_meetings/${req.params.meeting_id}/participants`,
+            auth: {
+                'Authorization': `BEARER ${token}`
+            },
+            header: {
+                'User-Agent': 'Zoom-api-Jwt-Request',
+                'content-type': 'application/json'
+            },
+            json: true
+        };
+
+        rp(options)
+        .then((response) => {
+            allParticipants = response.data.participants;
+        })
+        .catch((error) => {
+            return res.status(500).send({"status": "failed", "message": `${error}`});
+        });
+
+        var allFriends = getFriends(req.body.username);
+        if (res.status != 200) {
+            return res.status(500).send({"message": "Error getting friends"});
+        }
+        allFriends = allFriends.friends;
+
+        var allResults = allParticipants.map(allParticipants => {allParticipants.name, allParticipants.email});
+        while (allResults.length > 0) {
+            for (let j = 0; j < allResults.length; j++) {
+                if (allResults[0].user_email == allFriends[j].email) {
                         allUsers.push(results.data[0]);
-                        results.data.splice(0, 1);
-                    }
+                        allResults.splice(0, 1);
                 }
             }
-        }).catch((err) => {
-            return res.status(500).send({"status": "failed", "message": `${err}`});
-        });
+        }
     }
     else {
-        axios('/users/friends', {
-            method: 'get',
-            params: {
-                username: req.body.username
-            }
-        }).then((results) => {
-            allUsers = results.data;
-        }).catch((err) => {
-            return res.status(500).send({"status": "failed", "message": `${err}`});
-        }); //get all usernames
+        allUsers = getFriends(req.body.username);
+        if (res.status != 200) {
+            return res.status(500).send({"message": "Error getting friends"});
+        }
+        allUsers = allUsers.friends;
     }
 
     for (let i = 0; i < allUsers.length; i++) { //upload to each user's external bucket (bucket for shared videos)
@@ -50,7 +61,7 @@ const shareRecording = function (req, res) {
             createBucket(allUsers[i].username + "-external");
         }
 
-        var res = uploadExternalVideo();
+        var res = uploadExternalVideo(allUsers[i].username + "-external", req.body.videoname, req.body.username, req.body.username + "_out");
         if (res == 0) {
             return res.status(500).send({"message": "Error uploading video"});
         }
