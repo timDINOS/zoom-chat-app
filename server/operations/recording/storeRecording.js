@@ -82,7 +82,7 @@ const storeRecording = function(req, res) {
 
     const fileStream = fs.createReadStream(filename);
 
-    const uploadRes = uploadVideo(filename, filestream, bucketname);
+    const uploadRes = uploadVideo(filename, fileStream, bucketname);
     if (uploadRes == 0) {
         return res.status(500).send({"status": "failed", "message": "Error uploading video to S3"});
     }

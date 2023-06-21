@@ -7,7 +7,7 @@ const addFriend = function(req, res) {
         url: '',
         data: {
             query: `
-                mutation addFriend($user: other_user, $username: username) {
+                mutation addFriend($user: other_user, $username: username, $email: email) {
                     username
                 }
             `

@@ -15,6 +15,9 @@ const friendSchema = Schema({
         },
         date: {
             type: Date
+        },
+        email: {
+            type: String
         }
     }]
 });

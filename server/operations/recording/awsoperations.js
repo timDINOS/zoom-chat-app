@@ -1,6 +1,11 @@
 const aws = require('aws-sdk');
 
-const s3 = new aws.S3({});
+const config = {
+    accessKeyId: process.env.S3_KEY,
+    secretAccessKey: process.env.S3_SECRET_KEY
+};
+
+const s3 = new aws.S3(config);
 
 const createBucket = function(bucket) {
     var params = {
@@ -15,6 +20,27 @@ const createBucket = function(bucket) {
 
     return 1;
 }
+
+const uploadExternalVideo = function(bucket, video, host, hostBucket) {
+    var objData = {
+        User: host,
+        HostBucket: hostBucket
+    };
+
+    var params = {
+        Bucket: bucket,
+        Key: video,
+        Body: objData
+    };
+
+    s3.putObject(params, function(err, data) {
+        if (err) {
+            return 0;
+        }
+    });
+
+    return 1;
+};
 
 const uploadVideo = function(videoname, stream, bucket) {
     var params = {
@@ -112,4 +138,4 @@ const deleteBucket = function(username) {
     return 1;
 }
 
-module.exports = { createBucket, uploadVideo, hasBucket, GetAllRecordings, deleteObject, deleteBucket};
+module.exports = { createBucket, uploadVideo, hasBucket, GetAllRecordings, deleteObject, deleteBucket, uploadExternalVideo};
