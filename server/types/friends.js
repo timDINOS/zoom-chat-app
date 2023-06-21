@@ -3,7 +3,8 @@ const {gql} = require("apollo-server");
 module.exports = gql`
     type Friend {
         name: String!,
-        date: Date!
+        date: Date!,
+        email: String!
     }
 
     type Friends{
@@ -16,7 +17,8 @@ module.exports = gql`
     }
 
     type addNewFriend{
-        username: String!
+        username: String!,
+        email: String!
     }
 
     type removeFriend{
@@ -24,7 +26,7 @@ module.exports = gql`
     }
 
     type Mutation{
-        addFriend(user: String, username: String): addNewFriend!,
+        addFriend(user: String, username: String, email: String): addNewFriend!,
         removeFriend(user: String, username: String): removeFriend!
     }
 `

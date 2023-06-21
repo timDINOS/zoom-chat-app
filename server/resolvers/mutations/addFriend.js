@@ -1,5 +1,5 @@
 
-const addFriend = async function(_, {user, username}, {conn}) {
+const addFriend = async function(_, {user, username, email}, {conn}) {
     await conn.Profile.findOneAndUpdate({username: user}, {
         $inc: {
             count: 1
@@ -18,17 +18,11 @@ const addFriend = async function(_, {user, username}, {conn}) {
         }
         await conn.Friends.create(newEntry);
     }
-    await conn.Friends.findOneAndUpdate({username: username}, {
-        $push: {
-            username: user,
-            date: new Date()
-        }
-    });
-
-    await conn.Friends.findOneAndUpdate({username: user}, {
+    await conn.Friends.findOneAndUpdate({username: username, email: email}, {
         $push: {
             username: username,
-            date: new Date()
+            date: new Date(),
+            email: email
         }
     });
 
