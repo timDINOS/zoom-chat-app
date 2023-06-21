@@ -13,6 +13,7 @@ const getFriends = function(req, res) {
                         friends {
                             username
                             date
+                            email
                         }
                     }
                 }

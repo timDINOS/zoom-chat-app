@@ -9,12 +9,14 @@ const addFriend = function(req, res) {
             query: `
                 mutation addFriend($user: other_user, $username: username, $email: email) {
                     username
+                    email
                 }
             `
         },
         variables: {
             other_user: req.body.username,
-            username: req.session.username
+            username: req.session.username,
+            email: req.session.email
         }
     }).then((res) => {})
     .catch((err) => {
