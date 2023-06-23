@@ -7,6 +7,24 @@ const rp = require('request-promise');
 // 2. host username
 // 3. bool on whether recording shared to participants only
 
+const retrieveFriends = function (username) {
+    axios({
+        method: 'get',
+        url: '/Users/Friends',
+        data: {
+            username: username
+        }
+    })
+    .then((response) => {
+        return response.data.friends;
+    })
+    .catch((error) => {
+        return null;
+    });
+
+    return null;
+};
+
 const shareRecording = function (req, res) {
     var allUsers;
     if (res.body.participantsOnly) { //get all participants
@@ -32,11 +50,11 @@ const shareRecording = function (req, res) {
             return res.status(500).send({"status": "failed", "message": `${error}`});
         });
 
-        var allFriends = getFriends(req.body.username);
-        if (res.status != 200) {
-            return res.status(500).send({"message": "Error getting friends"});
+        var allFriends = retrieveFriends(req.body.username);
+
+        if (allFriends == null) {
+            return res.status(500).send({"message": "Error retrieving friends"});
         }
-        allFriends = allFriends.friends;
 
         var allResults = allParticipants.map(allParticipants => {allParticipants.name, allParticipants.email});
         while (allResults.length > 0) {
@@ -49,11 +67,10 @@ const shareRecording = function (req, res) {
         }
     }
     else {
-        allUsers = getFriends(req.body.username);
-        if (res.status != 200) {
-            return res.status(500).send({"message": "Error getting friends"});
+        allUsers = retrieveFriends(req.body.username);
+        if (allUsers == null) {
+            return res.status(500).send({"message": "Error retrieving friends"});
         }
-        allUsers = allUsers.friends;
     }
 
     for (let i = 0; i < allUsers.length; i++) { //upload to each user's external bucket (bucket for shared videos)
