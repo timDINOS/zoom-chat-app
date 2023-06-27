@@ -1,1 +1,28 @@
-<p>home works!</p>
+<html>
+    <head>
+        <title>Zoom Chat App - Homepage</title>
+    </head>
+    <body>
+        <h1>Zoom Chat App</h1>
+        <div *ngIf="!isLoggedIn else logoutButton">
+            <button (click)="login()">Login</button>
+        </div>
+        <ng-template #logoutButton>
+            <button (click)="logout()">Logout</button>
+        </ng-template>
+
+        <button (click)="meeting-creation()">Create a Meeting<button>
+
+        <button (click)="recordings()">View Your Recordings</button>
+
+        <button (click)="profile()">View Your Profile</button>
+
+        <div *ngIf="!isLoggedIn else HomeBody">
+            <p>Please login to access your account</p>
+        </div>
+
+        <ng-template #HomeBody>
+
+        </ng-template>
+    </body>
+</html>
