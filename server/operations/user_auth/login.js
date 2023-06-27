@@ -61,4 +61,14 @@ const login = function(req, res) {
     }
 }
 
-module.exports = login;
+const isLoggedIn = function(req, res) {
+    if (req.session.loggedIn) {
+        return res.status(200).send({"status": "success", "message": "logged"});
+    }
+    else {
+        return res.status(404).send({"status": "failed", "message": "unlogged"});
+    }
+}
+
+
+module.exports = {login, isLoggedIn};

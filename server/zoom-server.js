@@ -3,7 +3,7 @@ const app = express();
 const { createMeeting, joinMeeting, deleteMeeting, getMeetingInfo } = require('./operations/meeting/meeting_api');
 const server = require("./server");
 const logout = require("./operations/user_auth/logout");
-const login = require("./operations/user_auth/login");
+const {login, isLoggedIn} = require("./operations/user_auth/login");
 const register = require("./operations/user_auth/register");
 const changePassword = require("./operations/user_auth/change_password");
 const addFriends = require("./operations/friends/addFriend");
@@ -71,6 +71,8 @@ app.get('/zoom/account', checkAccount);
 
 //User Auth
 app.post("/users/login", login);
+
+app.get("/users/isLogged", isLoggedIn);
 
 app.post("/users/logout", logout);
 
