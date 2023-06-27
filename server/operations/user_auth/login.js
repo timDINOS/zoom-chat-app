@@ -62,7 +62,7 @@ const login = function(req, res) {
 }
 
 const isLoggedIn = function(req, res) {
-    if (req.session.loggedIn) {
+    if (req.session.username == req.params.username) {
         return res.status(200).send({"status": "success", "message": "logged"});
     }
     else {
