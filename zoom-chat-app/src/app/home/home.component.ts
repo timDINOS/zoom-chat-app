@@ -8,6 +8,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class HomeComponent implements OnInit {
   loggedIn:boolean = false; 
+  username:String = " ";
 
   constructor(private http: HttpClient) { }
 
@@ -15,6 +16,7 @@ export class HomeComponent implements OnInit {
     this.http.get<any>('http://localhost:3000/api/users/isLogged').subscribe((data: any) => {
       if (data.message == 'logged') {
         this.loggedIn = true;
+        this.username = localStorage.getItem('username')!;
       }
     });
   }
